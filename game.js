@@ -1,11 +1,19 @@
 /*
 Añadir:
-- Final de partida y ganador
+- Jugador no jugable
+- Tit for tat: Este jugador empieza cooperando y en las siguientes rondas imita la ultima jugada del adversario
 */
 
+// Puntuación máxima permitida
+const puntuacionFinal = 25;
+// Indicar si la partida ha terminado
+let partidaFinalizada = false;
+
+
 class Jugador {
-    constructor(id, teclaCooperar, teclaTraicionar) {
+    constructor(id, nombre, teclaCooperar, teclaTraicionar) {
         this.id = id;
+        this.nombre = nombre;
         this.puntos = 0;
         this.decision = '-';
         this.teclaCooperar = teclaCooperar;
@@ -36,8 +44,8 @@ class Jugador {
 
 // Crear jugadores y agregarlos a una lista
 const jugadores = [
-    new Jugador('player1', '1', '2'),
-    new Jugador('player2', '3', '4')
+    new Jugador('player1', 'P1', '1', '2'),
+    new Jugador('player2', 'P2', '3', '4')
 ];
 let ronda = 1;
 
@@ -57,25 +65,31 @@ function contarDecisiones() {
     return { cooperaciones, traiciones };
 }
 
-
 // Función para resolver la ronda
 function resolveRound() {
+    // Si la partida ya ha terminado, salimos de la función sin hacer nada
+    if (partidaFinalizada) {
+        return;
+    }
+
     const { cooperaciones, traiciones } = contarDecisiones();
 
+    // Todos cooperan
     if (traiciones === 0) {
-        // Todos cooperan
         console.log("Todos cooperan");
         jugadores.forEach(jugador => jugador.actualizarPuntos(jugador.puntos + 2));
-    } else if (traiciones === 1) {
-        // Hay un traidor
+    }
+    // Hay un traidor
+    else if (traiciones === 1) {
         console.log("Hay un traidor");
         jugadores.forEach(jugador => {
             if (jugador.decision === 'T') {
                 jugador.actualizarPuntos(jugador.puntos + 3);
             }
         });
-    } else {
-        // WAR
+    }
+    // WAR
+    else {
         console.log("Guerra");
         // Bote
         const bote = Math.floor(jugadores.reduce((sum, jugador) => sum + jugador.puntos, 0) / 2);
@@ -101,11 +115,24 @@ function resolveRound() {
 
     // Actualizar log de movimientos
     const roundLog = document.getElementById('round-log');
-    // &nbsp; = espacio
     const roundEntry = `Ronda ${ronda}:  &nbsp;&nbsp;&nbsp;&nbsp;  P1 ${jugadores[0].decision} ${jugadores[0].puntos}  &nbsp;&nbsp;&nbsp;&nbsp; P2 ${jugadores[1].decision} ${jugadores[1].puntos}<br>`;
-
+    // &nbsp; = espacio
     roundLog.innerHTML += roundEntry;
     ronda++;
+
+    // Verificar si hay un ganador
+    const ganadores = jugadores.filter(jugador => jugador.puntos >= puntuacionFinal);
+    if (ganadores.length > 0) {
+        const ganadoresString = ganadores.map(ganador => ganador.nombre).join(' y ');
+
+        if (ganadores.length === 1) {
+            roundLog.innerHTML += `${ganadoresString} ha ganado! <br>¡FIN!`;
+        } else {
+            roundLog.innerHTML += `Empate entre ${ganadoresString}! <br>¡FIN!`;
+        }
+        partidaFinalizada = true; // Marcar la partida como finalizada
+    }
+
 }
 
 // Listener para Enter fuera de la clase Jugador

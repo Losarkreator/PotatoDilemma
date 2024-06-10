@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Consola</title>
+    <script src="game.js"></script>
+    <style>
+        /* Estilos CSS para la cuadrícula */
+        #game-console {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header, .cell {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        .header {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        /* Estilos CSS para el botón */
+        #resolve-button {
+            grid-column: span 3;
+            padding: 10px;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #resolve-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos para el área de movimientos */
+        #round-log {
+            grid-column: span 3;
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-console">
+        <!-- Headers -->
+        <div class="header">Puntos</div>
+        <div class="header">P1</div>
+        <div class="header">P2</div>
+
+        <!-- Puntos -->
+        <div class="cell">Puntos</div>
+        <div class="cell" id="player1-points">0</div>
+        <div class="cell" id="player2-points">0</div>
+
+        <!-- Decisión -->
+        <div class="cell">Decisión</div>
+        <div class="cell" id="player1-decision">-</div>
+        <div class="cell" id="player2-decision">-</div>
+
+        <!-- Botón para resolver ronda -->
+        <button id="resolve-button" onclick="resolveRound()">Resolver Ronda</button>
+        
+         <!-- Área de log de movimientos -->
+         <div id="round-log">
+            <!-- Este div se actualizará con los movimientos -->
+        </div>
+    </div>
+    
+</body>
+
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Consola</title>
+    <style>
+        /* Estilos CSS aquí */
+    </style>
+</head>
+
+<body>
+    <div id="game-console">
+        <div id="player1-input">
+            <label for="player1">Jugador 1: </label>
+            <input type="text" id="player1" maxlength="1" placeholder="C/T">
+            <span id="player1-score">Puntos: 0</span>
+        </div>
+        <div id="player2-input">
+            <label for="player2">Jugador 2: </label>
+            <input type="text" id="player2" maxlength="1" placeholder="C/T">
+            <span id="player2-score">Puntos: 0</span>
+        </div>
+        <button onclick="resolveRound()">Resolver Ronda</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Jugador 1 teclas
+        document.addEventListener("keyup", function (event) {
+            if (event.key === "1") {
+                document.getElementById("player1").value = "C";
+            } else if (event.key === "2") {
+                document.getElementById("player1").value = "T";
+            }
+        });
+
+        // Jugador 2 teclas
+        document.addEventListener("keyup", function (event) {
+            if (event.key === "q" || event.key === "Q") {
+                document.getElementById("player2").value = "C";
+            } else if (event.key === "w" || event.key === "W") {
+                document.getElementById("player2").value = "T";
+            }
+        });
+
+
+        // Presiona Enter
+        document.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                resolveRound();
+                updateScores();
+            }
+        });
+
+        // Función para actualizar la puntuación de cada jugador
+        function updateScores(player1Points, player2Points) {
+            document.getElementById("player1-score").innerText = "Puntos: " + player1Points;
+            document.getElementById("player2-score").innerText = "Puntos: " + player2Points;
+        }
+
+        // Función para obtener la puntuación de un jugador
+        function getPlayerScore(playerId) {
+            return parseInt(document.getElementById(playerId + "-score").innerText.split(":")[1]);
+        }
+
+        // RESOLVER
+        function resolveRound() {
+            const player1Decision = document.getElementById("player1").value;
+            const player2Decision = document.getElementById("player2").value;
+            let player1Points = getPlayerScore("player1");
+            let player2Points = getPlayerScore("player2");
+
+            console.log('Decisiones de los jugadores: ');
+            console.log("P1: " + document.getElementById("player1").value);
+            console.log("P2: " + document.getElementById("player2").value);
+
+            // WAR
+            if (player1Decision === "T" || player2Decision === "T") {
+
+                if (document.getElementById("player1").value == "T" && document.getElementById("player2").value == "T") {
+                    console.log("WAR");
+                    // Bote = (puntosP1 + puntosP2) /2
+                    const pot = Math.floor((player1Points + player2Points) / 2);
+                    // console.log("Bote es: " + pot);
+
+
+                    // Resolver guerra al azar (cara o cruz)
+                    const winner = Math.random() < 0.5 ? 1 : 2;
+
+                    if (winner === 1) {
+                        // El ganador suma el bote a sus puntos
+                        player1Points += pot;
+                        // El perdedor divide sus puntos por la mitad
+                        player2Points = Math.floor(player2Points / 2);
+                    } else {
+                        player2Points += pot;
+                        player1Points = Math.floor(player1Points / 2);
+                    }
+
+                    document.getElementById("result").innerText = "Guerra! Ganador: Jugador " + winner + ". Bote: " + pot;
+                } else {
+                    // console.log("Un traidor");
+
+                    if (player1Decision === "T") {
+                        player1Points += 5;
+                    } else {
+                        player2Points += 5;
+                    }
+
+                    document.getElementById("result").innerText = "Un traidor! Jugador " + (player1Decision === "T" ? 1 : 2) + " avanza 5 casillas.";
+                }
+
+            }
+
+            // PAZ
+            else {
+                console.log("PAZ: 2 puntos a cada jugador")
+                // Aumentar 2 el marcador
+                player1Points += 2;
+                player2Points += 2;
+                document.getElementById("result").innerText = "Todos cooperaron! Cada jugador avanza 2 casillas.";
+            
+            }
+            updateScores(player1Points, player2Points);
+        }
+
+
+    </script>
+</body>
+
+</html>
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Consola</title>
+    <style>
+        /* Estilos CSS para la cuadrícula */
+        #game-console {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header,
+        .cell {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        .header {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        /* Estilos CSS para el botón */
+        #resolve-button {
+            grid-column: span 3;
+            padding: 10px;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #resolve-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-console">
+        <!-- Headers -->
+        <div class="header">Puntos</div>
+        <div class="header">P1</div>
+        <div class="header">P2</div>
+
+        <!-- Puntos -->
+        <div class="cell">Puntos</div>
+        <div class="cell" id="player1-points">0</div>
+        <div class="cell" id="player2-points">0</div>
+
+        <!-- Decisión -->
+        <div class="cell">Decisión</div>
+        <div class="cell" id="player1-decision">-</div>
+        <div class="cell" id="player2-decision">-</div>
+
+        <!-- Botón para resolver ronda -->
+        <button id="resolve-button" onclick="resolveRound()">Resolver Ronda</button>
+    </div>
+
+    <script>
+        // Función placeholder para resolver la ronda
+        function resolveRound() {
+            console.log("TEST boton");
+        }
+
+
+
+        // IMPUT TECLAS
+         // Jugador 1 
+         document.addEventListener("keyup", function (event) {
+            if (event.key === "1") {
+                // document.getElementById("player1").value = "C";
+            } else if (event.key === "2") {
+                // document.getElementById("player1").value = "T";
+            }
+        });
+
+        // Jugador 2
+        document.addEventListener("keyup", function (event) {
+            if (event.key === "q" || event.key === "Q") {
+                // document.getElementById("player2").value = "C";
+            } else if (event.key === "w" || event.key === "W") {
+                // document.getElementById("player2").value = "T";
+            }
+        });
+
+        // Enter
+        document.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                resolveRound();
+                // updateScores();
+            }
+        });
+        
+    </script>
+
+</body>
+
+</html>

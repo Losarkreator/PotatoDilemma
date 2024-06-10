@@ -1,8 +1,6 @@
 /*
 Añadir:
 - Final de partida y ganador
-- cambiar nombre del Log de la partida
-
 */
 
 class Jugador {
@@ -103,7 +101,9 @@ function resolveRound() {
 
     // Actualizar log de movimientos
     const roundLog = document.getElementById('round-log');
-    const roundEntry = `Ronda ${ronda}: ${jugadores.map(jugador => `${jugador.id} ${jugador.decision} ${jugador.puntos}`).join(' ')}<br>`;
+    // &nbsp; = espacio
+    const roundEntry = `Ronda ${ronda}:  &nbsp;&nbsp;&nbsp;&nbsp;  P1 ${jugadores[0].decision} ${jugadores[0].puntos}  &nbsp;&nbsp;&nbsp;&nbsp; P2 ${jugadores[1].decision} ${jugadores[1].puntos}<br>`;
+
     roundLog.innerHTML += roundEntry;
     ronda++;
 }

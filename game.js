@@ -1,6 +1,8 @@
 /*
 Añadir:
-- Jugador no jugable
+- Alternar entre IA y humano
+- No se puede resolver la ronda si no están todas las elecciones
+- Alternar entre IA y Humano por interfaz
 - Tit for tat: Este jugador empieza cooperando y en las siguientes rondas imita la ultima jugada del adversario
 */
 
@@ -8,7 +10,12 @@ Añadir:
 const puntuacionFinal = 25;
 // Indicar si la partida ha terminado
 let partidaFinalizada = false;
+// Variable para indicar si el jugador 2 es una IA o humano
+let jugador2IA = true;
 
+function cambiarJugador2() {
+    jugador2IA = !jugador2IA; // Cambiar entre true y false
+}
 
 class Jugador {
     constructor(id, nombre, teclaCooperar, teclaTraicionar) {
@@ -25,8 +32,10 @@ class Jugador {
         document.addEventListener("keyup", (event) => {
             if (event.key === this.teclaCooperar) {
                 this.actualizarDecision('C');
+                if (jugador2IA) jugadores[1].actualizarDecision(jugadores[1].tomarDecision());
             } else if (event.key === this.teclaTraicionar) {
                 this.actualizarDecision('T');
+                if (jugador2IA) jugadores[1].actualizarDecision(jugadores[1].tomarDecision());
             }
         });
     }
@@ -42,10 +51,22 @@ class Jugador {
     }
 }
 
+class JugadorIA extends Jugador {
+    constructor(id, nombre) {
+        super(id, nombre);
+    }
+
+    // Método para que la IA tome decisiones aleatorias
+    tomarDecision() {
+        return Math.random() < 0.5 ? 'C' : 'T'; // Decisiones aleatorias
+    }
+}
+
 // Crear jugadores y agregarlos a una lista
 const jugadores = [
-    new Jugador('player1', 'P1', '1', '2'),
-    new Jugador('player2', 'P2', '3', '4')
+    new Jugador('P1', 'P1', '1', '2'),
+    // new Jugador('player2', 'P2', '3', '4')
+    new JugadorIA('P2', 'P2') 
 ];
 let ronda = 1;
 
@@ -70,6 +91,12 @@ function resolveRound() {
     // Si la partida ya ha terminado, salimos de la función sin hacer nada
     if (partidaFinalizada) {
         return;
+    }
+
+    // Lógica para el jugador 2 IA
+    if (jugador2IA) {
+        const decisionIA = jugadores[1].tomarDecision(); // Obtener la decisión de la IA
+        jugadores[1].actualizarDecision(decisionIA); // Actualizar la decisión del jugador 2
     }
 
     const { cooperaciones, traiciones } = contarDecisiones();
@@ -135,9 +162,18 @@ function resolveRound() {
 
 }
 
-// Listener para Enter fuera de la clase Jugador
+// LISTENER
+// Enter = resolver ronda
 document.addEventListener("keyup", (event) => {
     if (event.key === 'Enter' && event.target.tagName !== 'INPUT') {
         resolveRound();
+    }
+});
+
+// Tab = altenar entre IA y humano en el jugador 2
+document.addEventListener("keyup", (event) => {
+    if (event.key === 'Tab') {
+        cambiarJugador2();
+        console.log(`Jugador 2 ahora es ${jugador2IA ? 'IA' : 'humano'}`);
     }
 });

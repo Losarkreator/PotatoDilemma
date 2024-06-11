@@ -62,13 +62,13 @@
 
         <!-- Puntos -->
         <div class="cell">Puntos</div>
-        <div class="cell" id="player1-points">0</div>
-        <div class="cell" id="player2-points">0</div>
+        <div class="cell" id="P1-points">0</div>
+        <div class="cell" id="P2-points">0</div>
 
         <!-- Decisión -->
         <div class="cell">Decisión</div>
-        <div class="cell" id="player1-decision">-</div>
-        <div class="cell" id="player2-decision">-</div>
+        <div class="cell" id="P1-decision">-</div>
+        <div class="cell" id="P2-decision">-</div>
 
         <!-- Botón para resolver ronda -->
         <button id="resolve-button" onclick="resolveRound()">Resolver Ronda</button>
@@ -79,7 +79,18 @@
         </div>
     </div>
     
-    <script src="game.js"></script>
+    <!-- <script src="game.js"></script> -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Carga tu script externo game.js después de que el DOM esté completamente cargado
+            const script = document.createElement('script');
+            script.src = 'game.js';
+            document.head.appendChild(script);
+        });
+    </script>
+
+
 
 </body>
 

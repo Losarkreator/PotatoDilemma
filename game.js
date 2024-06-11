@@ -1,6 +1,5 @@
 /*
 Añadir:
-- Alternar entre IA y humano
 - No se puede resolver la ronda si no están todas las elecciones
 - Alternar entre IA y Humano por interfaz
 - Tit for tat: Este jugador empieza cooperando y en las siguientes rondas imita la ultima jugada del adversario

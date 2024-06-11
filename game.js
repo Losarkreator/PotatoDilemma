@@ -1,8 +1,13 @@
 /*
 Añadir:
-- No se puede resolver la ronda si no están todas las elecciones
-- Alternar entre IA y Humano por interfaz
+- Modificar Log de movimientos:
+    - Salto de linea con cada Ronda.
+    - Añadir cuando hay guerra
+        - Cuanto es el bote
+        - Quien es el ganador de la guerra
 - Tit for tat: Este jugador empieza cooperando y en las siguientes rondas imita la ultima jugada del adversario
+- Alternar entre IA y Humano por interfaz
+- Botón para reiniciar la partida?
 */
 
 // Puntuación máxima permitida
@@ -11,6 +16,9 @@ const puntuacionFinal = 25;
 let partidaFinalizada = false;
 // Variable para indicar si el jugador 2 es una IA o humano
 let jugador2IA = false;
+
+const resolveButton = document.getElementById('resolve-button');
+resolveButton.innerText = 'Elige cooperar o traicionar';
 
 class Jugador {
     constructor(id, nombre, teclaCooperar, teclaTraicionar, esIA = false) {
@@ -28,6 +36,9 @@ class Jugador {
 
     setupTeclado() {
         document.addEventListener("keyup", (event) => {
+            // Cambiar texto del botón
+            if (event.key === this.teclaCooperar || event.key === this.teclaTraicionar) resolveButton.innerText = 'Resolver Ronda';
+            
             // Jugador 1
             if (this.id === 'P1') {
                 if (event.key === this.teclaCooperar) {
@@ -100,8 +111,13 @@ function contarDecisiones() {
 
 // Función para resolver la ronda
 function resolveRound() {
+    // Verificar si alguno de los jugadores no ha tomado una decisión
+    const algunJugadorSinDecision = jugadores.some(jugador => jugador.decision === '-');
+    if (algunJugadorSinDecision) return;
+
     // Si la partida ya ha terminado, salimos de la función sin hacer nada
     if (partidaFinalizada) {
+        resolveButton.innerText = 'FIN';
         return;
     }
 

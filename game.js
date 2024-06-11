@@ -11,31 +11,45 @@ const puntuacionFinal = 25;
 // Indicar si la partida ha terminado
 let partidaFinalizada = false;
 // Variable para indicar si el jugador 2 es una IA o humano
-let jugador2IA = true;
-
-function cambiarJugador2() {
-    jugador2IA = !jugador2IA; // Cambiar entre true y false
-}
+let jugador2IA = false;
 
 class Jugador {
-    constructor(id, nombre, teclaCooperar, teclaTraicionar) {
+    constructor(id, nombre, teclaCooperar, teclaTraicionar, esIA = false) {
         this.id = id;
         this.nombre = nombre;
         this.puntos = 0;
         this.decision = '-';
         this.teclaCooperar = teclaCooperar;
         this.teclaTraicionar = teclaTraicionar;
-        this.setupTeclado();
+        this.esIA = esIA;
+        if (!esIA) {
+            this.setupTeclado();
+        }
     }
 
     setupTeclado() {
         document.addEventListener("keyup", (event) => {
-            if (event.key === this.teclaCooperar) {
-                this.actualizarDecision('C');
-                if (jugador2IA) jugadores[1].actualizarDecision(jugadores[1].tomarDecision());
-            } else if (event.key === this.teclaTraicionar) {
-                this.actualizarDecision('T');
-                if (jugador2IA) jugadores[1].actualizarDecision(jugadores[1].tomarDecision());
+            // Jugador 1
+            if (this.id === 'P1') {
+                if (event.key === this.teclaCooperar) {
+                    this.actualizarDecision('C');
+                    if (jugador2IA) jugadores[1].actualizarDecision(jugadores[1].tomarDecision());
+                    
+                } else if (event.key === this.teclaTraicionar) {
+                    this.actualizarDecision('T');
+                    if (jugador2IA) jugadores[1].actualizarDecision(jugadores[1].tomarDecision());
+                }
+            }
+            
+            // Jugador 2 elige si no es IA
+            if (this.id === 'P2') {
+                if (!jugador2IA) {
+                    if (event.key === this.teclaCooperar) {
+                        this.actualizarDecision('C');
+                    } else if (event.key === this.teclaTraicionar) {
+                        this.actualizarDecision('T');
+                    }
+                }
             }
         });
     }
@@ -49,14 +63,7 @@ class Jugador {
         this.decision = decision;
         document.getElementById(`${this.id}-decision`).innerText = this.decision;
     }
-}
 
-class JugadorIA extends Jugador {
-    constructor(id, nombre) {
-        super(id, nombre);
-    }
-
-    // Método para que la IA tome decisiones aleatorias
     tomarDecision() {
         return Math.random() < 0.5 ? 'C' : 'T'; // Decisiones aleatorias
     }
@@ -64,11 +71,17 @@ class JugadorIA extends Jugador {
 
 // Crear jugadores y agregarlos a una lista
 const jugadores = [
-    new Jugador('P1', 'P1', '1', '2'),
-    // new Jugador('player2', 'P2', '3', '4')
-    new JugadorIA('P2', 'P2') 
+    new Jugador('P1', 'P1', '1', '2', false),
+    new Jugador('P2', 'P2', '3', '4', false)
 ];
 let ronda = 1;
+
+function cambiarJugador2() {
+    jugador2IA = !jugador2IA;
+    // jugadores[1] = new Jugador('player2', 'P2', '3', '4', jugador2IA);
+    jugadores[1].esIA = jugador2IA;
+    console.log(`Jugador 2 es ${jugador2IA ? 'IA' : 'humano'}`);
+}
 
 // Función para contar las decisiones de los jugadores
 function contarDecisiones() {
@@ -174,6 +187,6 @@ document.addEventListener("keyup", (event) => {
 document.addEventListener("keyup", (event) => {
     if (event.key === 'Tab') {
         cambiarJugador2();
-        console.log(`Jugador 2 ahora es ${jugador2IA ? 'IA' : 'humano'}`);
+        // console.log(`Jugador 2 ahora es ${jugador2IA ? 'IA' : 'humano'}`);
     }
 });
